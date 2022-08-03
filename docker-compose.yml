@@ -1,0 +1,20 @@
+version: "3.6"
+services:
+
+  mongodb: 
+    command: "--nojournal"
+    container_name: mongodb
+    image: "mongo:3.6"
+    
+
+  orion: 
+    command: "-dbhost mongodb"
+    container_name: orion
+    hostname: orion
+    image: fiware/orion-ld
+    links: 
+      - mongodb
+    ports: 
+      - "1026:1026"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
