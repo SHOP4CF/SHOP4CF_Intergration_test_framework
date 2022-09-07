@@ -18,15 +18,57 @@ RESPONSE = b"HTTP/1.1 201 Created\n\nNotification Received"
 #     return os.path.join(ros_pkg.get_path("er_fiware_bridge"), "config/%s" % file_name)  ## Hardcoded
 
 
-def create_subscription_manifest(subscription_name, type, filter_query, sub_url, notification_content, subscription_port):
-    return {
-        "id": subscription_name,
-        "description": "Send notification to the test framework",
-        "type": "Subscription",
-        "entities": [{"type": type, "idPattern": ".*"}],
-        "watchedAttributes": ["isDefinedBy"],
-        "q": filter_query,
-        "notification": {
+def remove_all_tasks(orion_url):
+    url = orion_url + "ngsi-ld/v1/entities/"
+    request = requests.get(url, params={"type": "Task", "limit": "800"})
+    for parsed_json in request.json():
+        id_task = parsed_json["id"]
+        print("The task %s will be deleted." % id_task)
+        resp = requests.delete(url=orion_url + "ngsi-ld/v1/entities/" + id_task)
+        if resp.status_code == 204:
+            print("Task %s successfully deleted !" % id_task)
+        else:
+            raise Exception("Error while deleting task. \n%s \n%s" % (resp.status_code, resp.text))
+
+
+def remove_all_alerts(orion_url):
+    url = orion_url + "ngsi-ld/v1/entities/"
+    request = requests.get(url, params={"type": "https://uri.fiware.org/ns/data-models#Alert", "limit": "800"})
+    for parsed_json in request.json():
+        id_task = parsed_json["id"]
+        print("The task %s will be deleted." % id_task)
+        resp = requests.delete(url=orion_url + "ngsi-ld/v1/entities/" + id_task)
+        if resp.status_code == 204:
+            print("Task %s successfully deleted !" % id_task)
+        else:
+            raise Exception("Error while deleting task. \n%s \n%s" % (resp.status_code, resp.text))
+
+
+def remove_all_alerts(orion_url):
+    url = orion_url + "ngsi-ld/v1/entities/"
+    request = requests.get(url, params={"type": "https://uri.fiware.org/ns/data-models#Device", "limit": "800"})
+    for parsed_json in request.json():
+        id_task = parsed_json["id"]
+        print("The task %s will be deleted." % id_task)
+        resp = requests.delete(url=orion_url + "ngsi-ld/v1/entities/" + id_task)
+        if resp.status_code == 204:
+            print("Task %s successfully deleted !" % id_task)
+        else:
+            raise Exception("Error while deleting task. \n%s \n%s" % (resp.status_code, resp.text))
+
+
+def create_subscription_manifest(subscription_name, type, watchedAttributes, filter_query, sub_url, notification_content, subscription_port):
+    manifest = {}
+    manifest["id"] = subscription_name
+    manifest["description"] = "Send notification to the test framework"
+    manifest["type"] = "Subscription"
+    manifest["entities"] = [{"type": type, "idPattern": ".*"}]
+    if watchedAttributes is not None:
+        manifest["watchedAttributes"] = watchedAttributes
+    if filter_query is not None:
+        manifest["q"] = filter_query
+    manifest["notification"] = (
+        {
             "attributes": notification_content,
             "format": "keyValues",
             "endpoint": {
@@ -34,11 +76,15 @@ def create_subscription_manifest(subscription_name, type, filter_query, sub_url,
                 "accept": "application/json",
             },
         },
-        "@context": [
+    )
+    manifest["@context"] = (
+        [
             "https://smartdatamodels.org/context.jsonld",
             "https://raw.githubusercontent.com/shop4cf/data-models/master/docs/shop4cfcontext.jsonld",
         ],
-    }
+    )
+
+    return manifest
 
 
 def get_request(url, log_info=""):
@@ -65,11 +111,12 @@ def get_all_entities(orion_url):
     return get_request(entities_url, "All Fiware Created Entities")
 
 
-def create_subscription(orion_url, subcription_name, type_query, querry_filter, endpoint, notification_content, port):
+def create_subscription(orion_url, subcription_name, type_query, watchedAttributes, querry_filter, endpoint, notification_content, port):
     json_manifest = json.dumps(
         create_subscription_manifest(
             subcription_name,
             type_query,
+            watchedAttributes,
             querry_filter,
             endpoint,
             notification_content,
@@ -98,9 +145,8 @@ def delete_subscription(orion_url, sub_name):
     print("Subscription %s succefully deleted" % sub_name)
 
 
-def update_entity(orion_url, entity, content, context):
+def update_entity(orion_url, entity, content):
     url = orion_url + "ngsi-ld/v1/entityOperations/update?options=update"
-    entity["@context"] = context
     for key, value in content.items():
         entity[key] = value
     json_dump = json.dumps([entity])
@@ -113,10 +159,10 @@ def update_entity(orion_url, entity, content, context):
 
 
 def create_entity(orion_url, content):
-    url = orion_url + "ngsi-ld/v1/entities&limit=100"
+    url = orion_url + "ngsi-ld/v1/entities"
     headers = {"Content-Type": "application/ld+json"}
-    json_manifest = json.dumps(content)
-    req = requests.post(url, data=json_manifest, headers=headers)
+
+    req = requests.post(url, data=content, headers=headers)
     if req.status_code != 201:
         print("Error Creating the entity. \n Status code - %s \n - Error Code %s" % (req.status_code, req.text))
     else:
@@ -148,28 +194,26 @@ class FiwareSubscription(object):
         self,
         orion_url="",
         name="",
-        query_filter=None,
         host_ip="localhost",
         port=20000,
         callback_functions=[],
     ):
         self._orion_url = orion_url
         self._sub_name = "urn:ngsi-ld:Subscription:" + name
-        self._query_filter = query_filter
         self._ip = host_ip
         self._port = port
         self._callback_functions = callback_functions
         self._subscription_active = False
         self._listening_thread = threading.Thread(target=self._run_listener)
 
-    def _create_fiware_subscription(self, type_query, notification_content=["id"]):
+    def _create_fiware_subscription(self, type_query, watchedAttributes, querry_filter, notification_content=["id"]):
         all_subscriptions = get_all_subscriptions(self._orion_url)
         for subscription in all_subscriptions:
             if subscription["id"] == self._sub_name:
                 print("A subscription with the same id '%s' already registered. It will be deleted." % self._sub_name)
                 self._delete_subscription()
             # Create the subscription
-        create_subscription(self._orion_url, self._sub_name, type_query, self._query_filter, self._ip, notification_content, self._port)
+        create_subscription(self._orion_url, self._sub_name, type_query, watchedAttributes, querry_filter, self._ip, notification_content, self._port)
 
     def _create_socket(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -196,8 +240,8 @@ class FiwareSubscription(object):
             time.sleep(0.1)
         self._socket.close()
 
-    def connect_and_listen(self, type_querry="Task", notification_content=["id"]):
-        self._create_fiware_subscription(type_querry, notification_content)
+    def connect_and_listen(self, type_querry="Task", watchedAttributes=None, querry_filter=None, notification_content=[]):
+        self._create_fiware_subscription(type_querry, watchedAttributes, querry_filter, notification_content)
         self._subscription_active = True
         self._create_socket()
         self._shutdown_flag = False
@@ -222,7 +266,6 @@ def main(args=None):
     subscriber = FiwareSubscription(
         orion_url,
         "testing",
-        "involves.object==urn:ngsi-ld:test",
         "host.docker.internal",
         20001,
         [],

@@ -1,0 +1,42 @@
+{
+    "id": "urn:ngsi-ld:Device:company-xyz:agv-713",
+    "type": "Device",
+    "category": {
+        "type": "Property",
+        "value": ["sensor"]
+    },
+    "batteryLevel": {
+        "type": "Property",
+        "value": 1.0
+    },
+    "controlledProperty": {
+        "type": "Property",
+        "value": ["location"]
+    },
+    "relativePosition": {
+        "type": "Property",
+        "value": [5.5, 21],
+        "observedAt": "2020-12-01T11:23:19Z"
+    },
+    "deviceState": {
+        "type": "Property",
+        "value": "ok"
+    },
+    "isSpecifiedBy": {
+        "type": "Property",
+        "value": [
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:robot"
+            },
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:agv"
+            }
+        ]
+    },
+    "@context": [
+        "https://smartdatamodels.org/context.jsonld",
+        "https://raw.githubusercontent.com/shop4cf/data-models/master/docs/shop4cfcontext.jsonld"
+    ]
+}

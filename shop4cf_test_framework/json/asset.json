@@ -1,0 +1,30 @@
+{
+    "id": "urn:ngsi-ld:Asset:company-xyz:hammer-xqi7wnx",
+    "type": "Asset",
+    "description": {
+        "type": "Property",
+        "value": "Red hammer no. 58"
+    },
+    "state": {
+        "type": "Property",
+        "value": "available",
+        "observedAt": "2020-12-01T11:23:19Z"
+    },
+    "isSpecifiedBy": {
+        "type": "Property",
+        "value": [
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:any-asset"
+            },
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:hammer"
+            }
+        ]
+    },
+    "@context": [
+        "https://smartdatamodels.org/context.jsonld",
+        "https://raw.githubusercontent.com/shop4cf/data-models/master/docs/shop4cfcontext.jsonld"
+    ]
+}

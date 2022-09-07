@@ -1,0 +1,28 @@
+{
+    "id": "urn:ngsi-ld:Material:company-xyz:pcb-ncw498w",
+    "type": "Material",
+    "state": {
+        "type": "Property",
+        "value": {
+            "qualityControlOutcome": "defective"
+        },
+        "observedAt": "2020-12-01T11:23:19Z"
+    },
+    "isSpecifiedBy": {
+        "type": "Property",
+        "value": [
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:any-material"
+            },
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:product-pcb"
+            }
+        ]
+    },
+    "@context": [
+        "https://smartdatamodels.org/context.jsonld",
+        "https://raw.githubusercontent.com/shop4cf/data-models/master/docs/shop4cfcontext.jsonld"
+    ]
+}

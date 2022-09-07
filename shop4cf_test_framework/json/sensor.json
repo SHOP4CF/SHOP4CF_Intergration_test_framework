@@ -1,0 +1,42 @@
+{
+    "id": "urn:ngsi-ld:Device:company-xyz:sensor-12345",
+    "type": "Device",
+    "source": {
+        "type": "Relationship",
+        "object": "urn:ngsi-ld:Device:company-xyz:busbar-789"
+    },
+    "category": {
+        "type": "Property",
+        "value": ["sensor"]
+    },
+    "serialNumber": {
+        "type": "Property",
+        "value": "9845A"
+    },
+    "controlledProperty": {
+        "type": "Property",
+        "value": ["electricCurrent"]
+    },
+    "value": {
+        "type": "Property",
+        "value": 11.54,
+        "observedAt": "2020-12-01T11:23:19Z"
+    },
+    "deviceState": {
+        "type": "Property",
+        "value": "ok"
+    },
+    "isSpecifiedBy": {
+        "type": "Property",
+        "value": [
+            {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:ResourceSpecification:company-xyz:sensor"
+            }
+        ]
+    },
+    "@context": [
+        "https://smartdatamodels.org/context.jsonld",
+        "https://raw.githubusercontent.com/shop4cf/data-models/master/docs/shop4cfcontext.jsonld"
+    ]
+}

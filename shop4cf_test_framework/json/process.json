@@ -1,0 +1,23 @@
+{
+    "id": "urn:ngsi-ld:Process:company-xyz:nc847rc8347nc3",
+    "type": "Process",
+    "isDefinedBy": {
+        "type": "Relationship",
+        "object": "urn:ngsi-ld:ProcessDefinition:company-xyz:unloading-supplies"
+    },
+    "workParameters": {
+        "type": "Property",
+        "value": {
+            "truckId": 838
+        }
+    },
+    "status": {
+        "type": "Property",
+        "value": "pending",
+        "observedAt": "2020-12-01T11:23:19Z"
+    },
+    "@context": [
+        "https://smartdatamodels.org/context.jsonld",
+        "https://raw.githubusercontent.com/shop4cf/data-models/master/docs/shop4cfcontext.jsonld"
+    ]
+}

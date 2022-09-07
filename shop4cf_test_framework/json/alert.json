@@ -1,0 +1,63 @@
+{
+    "id": "urn:ngsi-ld:Alert:company-xyz:pred-maint-3x29md89",
+    "type": "Alert",
+    "category": {
+        "type": "Property",
+        "value": "predictiveMaintenance"
+    },
+    "subCategory": {
+        "type": "Property",
+        "value": "incorrectPaintingProcessInKTL"
+    },
+    "validTo": {
+        "type": "Property",
+        "value": {
+            "@type": "DateTime",
+            "@value": "2017-01-02T10:25:55.00Z"
+        }
+    },
+    "description": {
+        "type": "Property",
+        "value": "Skid no. 12345 needs maintenance"
+    },
+    "location": {
+        "type": "GeoProperty",
+        "value": {
+            "type": "Point",
+            "coordinates": [-3.712247222222222, 40.423852777777775]
+        }
+    },
+    "dateIssued": {
+        "type": "Property",
+        "value": {
+            "@type": "DateTime",
+            "@value": "2017-01-02T09:25:55.00Z"
+        }
+    },
+    "alertSource": {
+        "type": "Relationship",
+        "object": "urn:ngsi-ld:Asset:company-xyz:skid-12345"
+    },
+    "source": {
+        "type": "Property",
+        "value": "PMADAI"
+    },
+    "validFrom": {
+        "type": "Property",
+        "value": {
+            "@type": "DateTime",
+            "@value": "2017-01-02T09:25:55.00Z"
+        }
+    },
+    "severity": {
+        "type": "Property",
+        "value": "high"
+    },
+    "humanVerified": {
+        "type": "Property",
+        "value": false
+    },
+    "@context": [
+        "https://smartdatamodels.org/context.jsonld"
+    ]
+}
